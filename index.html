@@ -1,3 +1,4 @@
+<!-- Copyright (c) 2026 Wuping Xin. Licensed under CC BY 4.0. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -338,7 +339,29 @@
       padding-top: 18px;
     }
     .footer-note { font-size: 12.5px; color: var(--text-muted); max-width: 500px; line-height: 1.65; }
+    .footer-right { text-align: right; }
     .footer-brand { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.14em; white-space: nowrap; }
+    .footer-license { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .footer-license a { color: var(--accent); text-decoration: none; }
+    .footer-license a:hover { text-decoration: underline; }
+
+    /* Layer controls */
+    .layer-controls { display: flex; gap: 8px; margin-bottom: 16px; }
+    .layer-ctrl-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600;
+      padding: 6px 14px;
+      border: 1.5px solid var(--wrap-border);
+      border-radius: 8px;
+      background: var(--detail-bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .layer-ctrl-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
 
     @media (max-width: 900px) {
       .page { grid-template-columns: 1fr !important; max-width: 780px; }
@@ -373,6 +396,11 @@
       <div class="hd-title">The Building Blocks of Modern AI</div>
       <div class="hd-sub">Click any concept to expand its explanation</div>
       <div class="hd-rule"></div>
+    </div>
+
+    <div class="layer-controls">
+      <button class="layer-ctrl-btn" onclick="toggleAllLayers(false)">Expand All</button>
+      <button class="layer-ctrl-btn" onclick="toggleAllLayers(true)">Collapse All</button>
     </div>
 
     <div class="center-wrap"><div class="center-node">Modern AI Systems</div></div>
@@ -475,7 +503,10 @@
 
     <div class="footer">
       <div class="footer-note">The lower the layer, the more stable. Every AI product is a combination of these blocks -- map any pitch, any architecture, any product to this table.</div>
-      <div class="footer-brand">AI Concept Map</div>
+      <div class="footer-right">
+        <div class="footer-brand">&copy; 2026 Wuping Xin</div>
+        <div class="footer-license">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></div>
+      </div>
     </div>
 
   </div>
@@ -563,6 +594,12 @@ function renderEmpty() {
 
 function toggleLayer(id) {
   document.getElementById(id).classList.toggle('collapsed');
+}
+
+function toggleAllLayers(collapse) {
+  document.querySelectorAll('.layer[id]').forEach(l => {
+    l.classList.toggle('collapsed', collapse);
+  });
 }
 
 function toggleTheme() {
