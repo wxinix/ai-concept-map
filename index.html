@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Building Blocks of Modern AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f3ef;
+      --wrap-bg: #f0ede8;
+      --wrap-border: #e0ddd6;
+      --grid-line: rgba(0,0,0,0.03);
+      --text-primary: #1a1a18;
+      --text-secondary: #3a3a38;
+      --text-muted: #6b6b66;
+      --text-faint: #8a8a82;
+      --text-hint: #aaa8a0;
+      --accent: #534AB7;
+      --accent-muted: rgba(83,74,183,0.2);
+      --accent-glow: rgba(83,74,183,0.3);
+      --detail-bg: #fff;
+      --detail-border: #e0ddd6;
+      --detail-note-bg: #f4f3ef;
+      --detail-note-border: #e0ddd6;
+      --footer-border: rgba(0,0,0,0.07);
+      --stem-color: rgba(0,0,0,0.12);
+      --node-hover-shadow: rgba(0,0,0,0.12);
+      --pu-bg: #EEEDFE; --pu-fg: #3C3489; --pu-bdr: #C5C1F4;
+      --pu2-bg: #E4E3F8; --pu2-fg: #534AB7; --pu2-bdr: #b8b4ee;
+      --te-bg: #E1F5EE; --te-fg: #085041; --te-bdr: #9FE1CB;
+      --te2-bg: #d3efe6; --te2-fg: #0F6E56; --te2-bdr: #80cfb3;
+      --bl-bg: #E6F1FB; --bl-fg: #0C447C; --bl-bdr: #B5D4F4;
+      --bl2-bg: #d8eaf8; --bl2-fg: #185FA5; --bl2-bdr: #92c1ee;
+      --am-bg: #FAEEDA; --am-fg: #633806; --am-bdr: #FAC775;
+      --co-bg: #FAECE7; --co-fg: #712B13; --co-bdr: #F5C4B3;
+      --gy-bg: #EEECEA; --gy-fg: #444441; --gy-bdr: #D3D1C7;
+      --gn-bg: #EAF3DE; --gn-fg: #27500A; --gn-bdr: #C0DD97;
+      --gn2-bg: #dff0ce; --gn2-fg: #3B6D11; --gn2-bdr: #a8d47a;
+    }
+
+    [data-theme="dark"] {
+      --bg: #111114;
+      --wrap-bg: #1a1a1f;
+      --wrap-border: #2a2a32;
+      --grid-line: rgba(255,255,255,0.03);
+      --text-primary: #ededeb;
+      --text-secondary: #b8b8b4;
+      --text-muted: #8a8a84;
+      --text-faint: #6a6a64;
+      --text-hint: #555550;
+      --accent: #7B73E0;
+      --accent-muted: rgba(123,115,224,0.25);
+      --accent-glow: rgba(123,115,224,0.35);
+      --detail-bg: #222228;
+      --detail-border: #333340;
+      --detail-note-bg: #1a1a1f;
+      --detail-note-border: #333340;
+      --footer-border: rgba(255,255,255,0.07);
+      --stem-color: rgba(255,255,255,0.12);
+      --node-hover-shadow: rgba(0,0,0,0.4);
+      --pu-bg: #2a2850; --pu-fg: #b0abf0; --pu-bdr: #3d3970;
+      --pu2-bg: #302d5a; --pu2-fg: #c4bff5; --pu2-bdr: #4a4580;
+      --te-bg: #152e28; --te-fg: #7fd4b5; --te-bdr: #1f4a3e;
+      --te2-bg: #1a382f; --te2-fg: #8ee0c0; --te2-bdr: #2a5a4a;
+      --bl-bg: #172840; --bl-fg: #8dbde8; --bl-bdr: #1f3a5a;
+      --bl2-bg: #1c3050; --bl2-fg: #9dcaf0; --bl2-bdr: #264870;
+      --am-bg: #352a14; --am-fg: #f0c870; --am-bdr: #504018;
+      --co-bg: #351e16; --co-fg: #f0a890; --co-bdr: #503020;
+      --gy-bg: #252524; --gy-fg: #b0b0a8; --gy-bdr: #404038;
+      --gn-bg: #1e2e14; --gn-fg: #a0d070; --gn-bdr: #304818;
+      --gn2-bg: #243818; --gn2-fg: #b0e080; --gn2-bdr: #3a5820;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px 80px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .page {
+      width: 100%; max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1fr 6px minmax(280px, 400px);
+      align-items: start;
+    }
+
+    /* Resizable divider */
+    .divider {
+      width: 6px;
+      cursor: col-resize;
+      background: transparent;
+      position: relative;
+      align-self: stretch;
+      z-index: 5;
+    }
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px; height: 48px;
+      border-radius: 2px;
+      background: var(--accent-muted);
+      transition: background 0.2s, height 0.2s;
+    }
+    .divider:hover::after, .divider.dragging::after {
+      background: var(--accent);
+      height: 64px;
+    }
+
+    .wrap {
+      background: var(--wrap-bg);
+      border: 1px solid var(--wrap-border);
+      border-radius: 20px;
+      padding: 44px 40px 56px;
+      position: relative;
+      overflow: visible;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .grid-bg {
+      position: absolute; inset: 0; pointer-events: none; border-radius: 20px;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    .z { position: relative; z-index: 1; }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      width: 42px; height: 24px;
+      background: var(--wrap-border);
+      border: none; border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      padding: 0;
+    }
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: transform 0.3s ease, background 0.3s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    [data-theme="dark"] .theme-toggle::after {
+      transform: translateX(18px);
+    }
+    .theme-toggle-icon {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      font-size: 12px; line-height: 1;
+    }
+    .theme-toggle-icon.sun { left: 5px; }
+    .theme-toggle-icon.moon { right: 5px; }
+
+    /* Header */
+    .hd-kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.22em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+    .hd-title  { font-size: 32px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.03em; line-height: 1.2; }
+    .hd-sub    { font-size: 15px; color: var(--text-muted); }
+    .hd-rule   { width: 40px; height: 3px; background: var(--accent); margin-top: 16px; border-radius: 2px; }
+    .header    { margin-bottom: 36px; }
+
+    /* Central node */
+    .center-wrap { display: flex; justify-content: center; margin-bottom: 5px; }
+    .center-node {
+      background: linear-gradient(135deg, var(--accent), #7B73E0);
+      color: #fff;
+      font-size: 17px; font-weight: 700;
+      padding: 14px 34px; border-radius: 32px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 20px var(--accent-glow); }
+      50% { box-shadow: 0 4px 30px var(--accent-glow), 0 0 40px rgba(83,74,183,0.15); }
+    }
+
+    /* Stems / connectors */
+    .stem-wrap { display: flex; justify-content: center; margin: 6px 0; }
+    .stem {
+      width: 3px; height: 28px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-muted));
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+    .connector-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; }
+    .connector-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.4; }
+
+    /* Layers */
+    .layer { margin-bottom: 24px; }
+    .lh {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+      cursor: pointer; user-select: none;
+      padding: 6px 0;
+    }
+    .lh:hover .ln, .lh:hover .lt { opacity: 0.75; }
+    .ln { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; color: var(--text-primary); transition: opacity 0.15s; }
+    .lt { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-secondary); text-transform: uppercase; transition: opacity 0.15s; }
+    .ll { flex: 1; height: 2px; background: linear-gradient(to right, var(--accent-muted), transparent 80%); border-radius: 1px; }
+    .lh-chevron {
+      font-size: 14px; color: var(--text-muted);
+      transition: transform 0.25s ease;
+      display: inline-block;
+      line-height: 1;
+    }
+    .layer.collapsed .lh-chevron { transform: rotate(-90deg); }
+    .layer-body {
+      overflow: visible;
+      max-height: none;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+      opacity: 1;
+    }
+    .layer.collapsed .layer-body {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .nodes { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Nodes */
+    .nd {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      font-size: 14px; font-weight: 500;
+      line-height: 1.2; cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      user-select: none;
+      opacity: 0;
+      animation: node-enter 0.4s ease forwards;
+    }
+    @keyframes node-enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .nd:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--node-hover-shadow); }
+    .nd:active { transform: scale(0.97); }
+    .nd.active { box-shadow: 0 0 0 2.5px var(--accent), 0 4px 16px var(--accent-glow); }
+    .nd.lg { font-size: 15px; font-weight: 700; padding: 12px 18px; border-radius: 11px; }
+    .nd.md { font-size: 14px; font-weight: 600; padding: 10px 16px; }
+    .nd.sm { font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: 7px; }
+
+    /* Color classes */
+    .pu  { background: var(--pu-bg); color: var(--pu-fg); border-color: var(--pu-bdr); }
+    .pu2 { background: var(--pu2-bg); color: var(--pu2-fg); border-color: var(--pu2-bdr); }
+    .te  { background: var(--te-bg); color: var(--te-fg); border-color: var(--te-bdr); }
+    .te2 { background: var(--te2-bg); color: var(--te2-fg); border-color: var(--te2-bdr); }
+    .bl  { background: var(--bl-bg); color: var(--bl-fg); border-color: var(--bl-bdr); }
+    .bl2 { background: var(--bl2-bg); color: var(--bl2-fg); border-color: var(--bl2-bdr); }
+    .am  { background: var(--am-bg); color: var(--am-fg); border-color: var(--am-bdr); }
+    .co  { background: var(--co-bg); color: var(--co-fg); border-color: var(--co-bdr); }
+    .gy  { background: var(--gy-bg); color: var(--gy-fg); border-color: var(--gy-bdr); }
+    .gn  { background: var(--gn-bg); color: var(--gn-fg); border-color: var(--gn-bdr); }
+    .gn2 { background: var(--gn2-bg); color: var(--gn2-fg); border-color: var(--gn2-bdr); }
+
+    /* Sub-branches */
+    .sb { border-left: 2px solid; padding-left: 12px; margin-left: 2px; margin-top: 7px; }
+    .sb-pu { border-color: rgba(83,74,183,0.25); }
+    .sb-te { border-color: rgba(15,110,86,0.25); }
+    .sb-bl { border-color: rgba(12,68,124,0.25); }
+    .sb-note { font-size: 11.5px; margin-top: 6px; padding-left: 2px; color: var(--text-muted); }
+
+    /* Layer 01 grid */
+    .l01 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .col { display: flex; flex-direction: column; gap: 5px; }
+    .col-hd { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; padding: 0 2px; }
+    .col-hd.c-pu { color: var(--pu-fg); }
+    .col-hd.c-te { color: var(--te-fg); }
+    .col-hd.c-bl { color: var(--bl-fg); }
+
+    .layer-note { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; padding-left: 2px; font-style: italic; line-height: 1.55; }
+
+    .hint { text-align: center; font-size: 13px; color: var(--text-muted); margin: 12px 0 20px; }
+
+    /* Detail sidebar */
+    .detail-sidebar {
+      position: sticky;
+      top: 40px;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    .detail {
+      padding: 24px 24px;
+      background: var(--detail-bg);
+      border: 1.5px solid var(--detail-border);
+      border-radius: 14px;
+      border-left: 4px solid var(--detail-border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: opacity 0.2s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .detail.has-accent-pu  { border-left-color: var(--pu-bdr); }
+    .detail.has-accent-pu2 { border-left-color: var(--pu2-bdr); }
+    .detail.has-accent-te  { border-left-color: var(--te-bdr); }
+    .detail.has-accent-te2 { border-left-color: var(--te2-bdr); }
+    .detail.has-accent-bl  { border-left-color: var(--bl-bdr); }
+    .detail.has-accent-bl2 { border-left-color: var(--bl2-bdr); }
+    .detail.has-accent-am  { border-left-color: var(--am-bdr); }
+    .detail.has-accent-co  { border-left-color: var(--co-bdr); }
+    .detail.has-accent-gy  { border-left-color: var(--gy-bdr); }
+    .detail.has-accent-gn  { border-left-color: var(--gn-bdr); }
+    .detail.has-accent-gn2 { border-left-color: var(--gn2-bdr); }
+
+    .detail-layer { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .detail-title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .detail-badge { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 5px 14px; border-radius: 7px; border: 1px solid transparent; margin-bottom: 16px; }
+    .detail-desc { font-size: 15px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 16px; }
+    .detail-note {
+      font-size: 13.5px; color: var(--text-secondary);
+      background: var(--detail-note-bg);
+      padding: 11px 15px; border-radius: 9px;
+      border-left: 3px solid var(--detail-note-border);
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--footer-border);
+      padding-top: 18px;
+    }
+    .footer-note { font-size: 12.5px; color: var(--text-muted); max-width: 500px; line-height: 1.65; }
+    .footer-brand { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.14em; white-space: nowrap; }
+
+    @media (max-width: 900px) {
+      .page { grid-template-columns: 1fr !important; max-width: 780px; }
+      .divider { display: none; }
+      .detail-sidebar { position: static; max-height: none; }
+      .detail { margin-top: 16px; }
+    }
+    @media (max-width: 600px) {
+      .wrap { padding: 28px 18px 40px; border-radius: 14px; }
+      .l01 { grid-template-columns: 1fr; }
+      .hd-title { font-size: 21px; }
+      .detail { padding: 18px 16px; }
+      .detail-title { font-size: 18px; }
+      .detail-desc { font-size: 13px; }
+      .footer { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nodes { gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="wrap">
+  <div class="grid-bg"></div>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span class="theme-toggle-icon sun" aria-hidden="true"></span>
+    <span class="theme-toggle-icon moon" aria-hidden="true"></span>
+  </button>
+  <div class="z">
+
+    <div class="header">
+      <div class="hd-kicker">AI Concept Map</div>
+      <div class="hd-title">The Building Blocks of Modern AI</div>
+      <div class="hd-sub">Click any concept to expand its explanation</div>
+      <div class="hd-rule"></div>
+    </div>
+
+    <div class="center-wrap"><div class="center-node">Modern AI Systems</div></div>
+    <div class="stem-wrap"><div class="stem"></div></div>
+    <div class="connector-dots"><div class="connector-dot"></div><div class="connector-dot"></div><div class="connector-dot"></div></div>
+
+    <div class="layer" id="layer1">
+      <div class="lh" onclick="toggleLayer('layer1')"><span class="ln">LAYER 01</span><span class="lt">Primitives</span><span class="ll"></span><span class="lh-chevron">&#9660;</span></div>
+      <div class="layer-body"><div class="l01">
+        <div class="col">
+          <div class="col-hd c-pu">Prompt</div>
+          <div class="nd lg pu" onclick="show('prompt',this)" style="animation-delay:0.05s">Prompt</div>
+          <div class="sb sb-pu">
+            <div class="nodes" style="flex-direction:column;gap:4px;">
+              <div class="nd sm pu2" onclick="show('temperature',this)" style="animation-delay:0.1s">Temperature</div>
+              <div class="nd sm pu2" onclick="show('context',this)" style="animation-delay:0.15s">Context Window</div>
+            </div>
+            <div class="sb-note">inference parameters</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-hd c-bl">LLM</div>
+          <div class="nd lg bl" onclick="show('llm',this)" style="animation-delay:0.1s">Large Language Model</div>
+          <div class="sb sb-bl">
+            <div class="nodes" style="flex-direction:column;gap:4px;">
+              <div class="nd sm bl2" onclick="show('transformer',this)" style="animation-delay:0.15s">Transformer</div>
+              <div class="nd sm bl2" onclick="show('moe',this)" style="animation-delay:0.2s">MoE</div>
+            </div>
+            <div class="sb-note">model architectures</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-hd c-te">Embedding</div>
+          <div class="nd lg te" onclick="show('embedding',this)" style="animation-delay:0.15s">Embedding</div>
+          <div class="sb sb-te">
+            <div class="nodes" style="flex-direction:column;gap:4px;">
+              <div class="nd sm te2" onclick="show('vectorspace',this)" style="animation-delay:0.2s">Vector Space</div>
+              <div class="nd sm te2" onclick="show('cosine',this)" style="animation-delay:0.25s">Cosine Similarity</div>
+            </div>
+            <div class="sb-note">semantic math foundations</div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="stem-wrap"><div class="stem"></div></div>
+
+    <div class="layer" id="layer2">
+      <div class="lh" onclick="toggleLayer('layer2')"><span class="ln">LAYER 02</span><span class="lt">Compositions</span><span class="ll"></span><span class="lh-chevron">&#9660;</span></div>
+      <div class="layer-body"><div class="nodes">
+        <div class="nd pu" onclick="show('fc',this)" style="animation-delay:0.15s">Function Calling</div>
+        <div class="nd pu" onclick="show('mcp',this)" style="animation-delay:0.2s">MCP</div>
+        <div class="nd te" onclick="show('vectordb',this)" style="animation-delay:0.25s">Vector Database</div>
+        <div class="nd am" onclick="show('rag',this)" style="animation-delay:0.3s">RAG</div>
+        <div class="nd gy" onclick="show('guardrails',this)" style="animation-delay:0.35s">Guardrails</div>
+        <div class="nd bl" onclick="show('multimodal',this)" style="animation-delay:0.4s">Multimodal</div>
+        <div class="nd bl" onclick="show('promptcache',this)" style="animation-delay:0.45s">Prompt Caching</div>
+      </div></div>
+    </div>
+
+    <div class="stem-wrap"><div class="stem"></div></div>
+
+    <div class="layer" id="layer3">
+      <div class="lh" onclick="toggleLayer('layer3')"><span class="ln">LAYER 03</span><span class="lt">Model Adaptation</span><span class="ll"></span><span class="lh-chevron">&#9660;</span></div>
+      <div class="layer-body"><div class="nodes">
+        <div class="nd gn" onclick="show('sft',this)" style="animation-delay:0.25s">SFT</div>
+        <div class="nd gn" onclick="show('lora',this)" style="animation-delay:0.3s">LoRA</div>
+        <div class="nd gn" onclick="show('rlhf',this)" style="animation-delay:0.35s">RLHF / DPO</div>
+        <div class="nd gn" onclick="show('distill',this)" style="animation-delay:0.4s">Knowledge Distillation</div>
+      </div>
+      <div class="layer-note">These adapt a pre-trained base model -- not training from scratch. Pre-training costs tens of millions of dollars; only a handful of labs do it.</div>
+    </div></div>
+
+    <div class="stem-wrap"><div class="stem"></div></div>
+
+    <div class="layer" id="layer4">
+      <div class="lh" onclick="toggleLayer('layer4')"><span class="ln">LAYER 04</span><span class="lt">Deployment</span><span class="ll"></span><span class="lh-chevron">&#9660;</span></div>
+      <div class="layer-body"><div class="nodes">
+        <div class="nd pu" onclick="show('agent',this)" style="animation-delay:0.35s">Agent</div>
+        <div class="nd te" onclick="show('finetune',this)" style="animation-delay:0.4s">Fine-tuning</div>
+        <div class="nd am" onclick="show('framework',this)" style="animation-delay:0.45s">Framework</div>
+        <div class="nd gy" onclick="show('eval',this)" style="animation-delay:0.5s">Evals</div>
+        <div class="nd gy" onclick="show('redteam',this)" style="animation-delay:0.55s">Red Teaming</div>
+        <div class="nd bl" onclick="show('smallmodel',this)" style="animation-delay:0.6s">Small Model</div>
+      </div></div>
+    </div>
+
+    <div class="stem-wrap"><div class="stem"></div></div>
+
+    <div class="layer" id="layer5">
+      <div class="lh" onclick="toggleLayer('layer5')"><span class="ln">LAYER 05</span><span class="lt">Emerging</span><span class="ll"></span><span class="lh-chevron">&#9660;</span></div>
+      <div class="layer-body"><div class="nodes">
+        <div class="nd co" onclick="show('multiagent',this)" style="animation-delay:0.45s">Multi-Agent Systems</div>
+        <div class="nd co" onclick="show('syndata',this)" style="animation-delay:0.5s">Synthetic Data</div>
+        <div class="nd co" onclick="show('interp',this)" style="animation-delay:0.55s">Interpretability</div>
+        <div class="nd co" onclick="show('thinking',this)" style="animation-delay:0.6s">Thinking Model</div>
+        <div class="nd co" onclick="show('testtime',this)" style="animation-delay:0.65s">Test-Time Compute</div>
+      </div></div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-note">The lower the layer, the more stable. Every AI product is a combination of these blocks -- map any pitch, any architecture, any product to this table.</div>
+      <div class="footer-brand">AI Concept Map</div>
+    </div>
+
+  </div>
+</div>
+<div class="divider" id="divider"></div>
+<div class="detail-sidebar" id="sidebar">
+  <div class="detail" id="panel">
+    <div class="detail-layer">Select a concept</div>
+    <div class="detail-title" style="color:var(--text-hint);">Click any node to see its explanation here</div>
+  </div>
+</div>
+</div>
+<script>
+const D = {
+  prompt:      { layer:'Layer 01 -- Primitives', title:'Prompt', badge:'Prompt', bcls:'pu', desc:"The instruction you give the model. It sounds trivial until you realize that changing one word can flip the output completely. That sensitivity isn't a bug -- it's the entire interface. Prompt engineering exists because of it.", note:'Every other layer in this map is ultimately about improving what goes into, or comes out of, a prompt.' },
+  temperature: { layer:'Layer 01 -- Prompt parameters', title:'Temperature', badge:'Inference parameter', bcls:'pu2', desc:"Controls how random the model's output is. At 0, it always picks the most probable next token -- deterministic and predictable. At higher values, it samples less likely tokens -- more creative, more unpredictable. Most production systems run between 0 and 0.7.", note:'Low temperature for factual tasks. High temperature for creative ones. Some APIs also expose top-p (nucleus sampling) as a complementary control.' },
+  context:     { layer:'Layer 01 -- Prompt parameters', title:'Context Window', badge:'Inference parameter', bcls:'pu2', desc:"The maximum amount of text a model can see at once -- input and output combined. Models now range from 8K to over 1M tokens. Bigger windows let you feed entire codebases or books, but cost and latency scale with length.", note:'Context window is one of the most important practical constraints in production AI. It is the core problem RAG was invented to work around, and prompt caching was invented to make affordable.' },
+  llm:         { layer:'Layer 01 -- Primitives', title:'Large Language Model', badge:'LLM', bcls:'bl', desc:"The engine. ChatGPT, Claude, Gemini, Llama -- these are all LLMs. They take a prompt and generate a continuation, token by token, based on patterns learned from vast amounts of text. Everything else in this map either feeds them better input, constrains their output, or extends what they can act on.", note:'The LLM is the one primitive that everything else orbits.' },
+  transformer: { layer:'Layer 01 -- LLM architectures', title:'Transformer', badge:'Architecture', bcls:'bl2', desc:"The architecture underlying virtually every modern LLM since 2017. Its key innovation is the attention mechanism -- each token can directly attend to every other token in context, capturing long-range relationships that older architectures (RNNs, LSTMs) struggled with. Variants like GPT (decoder-only) and BERT (encoder-only) are both transformers.", note:'"Attention Is All You Need" -- the 2017 Google paper that started it all.' },
+  moe:         { layer:'Layer 01 -- LLM architectures', title:'Mixture of Experts', badge:'MoE', bcls:'bl2', desc:"Instead of activating the whole model for every token, MoE routes each token to a subset of expert sub-networks. GPT-4, Mixtral, and DeepSeek-V3 use this approach. You get a model that behaves like a much larger one, but only pays compute for a fraction of the parameters per query.", note:'MoE raises the capability ceiling without proportionally raising inference cost. The tradeoff is higher total parameter count (more memory) and routing complexity.' },
+  embedding:   { layer:'Layer 01 -- Primitives', title:'Embedding', badge:'Embedding', bcls:'te', desc:"Converts text (or images, audio) into a list of numbers -- a vector -- that captures its meaning. The key property: semantically similar content maps to numerically similar vectors. 'The cat sat on the mat' and 'A kitten was resting on the rug' end up close together in vector space.", note:'Without embeddings there is no semantic search, no vector database, and no RAG.' },
+  vectorspace: { layer:'Layer 01 -- Embedding foundations', title:'Vector Space', badge:'Concept', bcls:'te2', desc:"The high-dimensional mathematical space where embeddings live. Each piece of text is a point in this space. Meaning becomes geometry: related concepts cluster, analogies become directions, similarity becomes distance.", note:'Word2Vec famously showed: king - man + woman = queen. That arithmetic happens in vector space.' },
+  cosine:      { layer:'Layer 01 -- Embedding foundations', title:'Cosine Similarity', badge:'Metric', bcls:'te2', desc:"The standard way to measure closeness between two embeddings. Rather than straight-line (Euclidean) distance, it measures the angle between vectors -- more robust when vectors have different magnitudes. Score ranges from -1 (opposite) to 1 (identical).", note:'Vector databases perform billions of approximate cosine similarity calculations using algorithms like HNSW and IVF for speed.' },
+  fc:          { layer:'Layer 02 -- Compositions', title:'Function Calling', badge:'Function Calling', bcls:'pu', desc:"Lets the LLM invoke external tools or APIs as part of generating a response. Ask about today's weather -- the model calls a weather API, reads the result, then answers. It transforms the LLM from a static knowledge source into something that can reach out and act in the world.", note:"The primitive that makes Agents possible. Without function calling, an agent can think but can't act." },
+  mcp:         { layer:'Layer 02 -- Compositions', title:'Model Context Protocol', badge:'MCP', bcls:'pu', desc:"An open standard (introduced by Anthropic) that provides a universal way for LLMs to connect to external tools, data sources, and services. Instead of each tool needing its own custom integration, MCP defines a shared protocol -- like USB-C for AI tools. Servers expose capabilities; clients (AI apps) discover and call them.", note:'MCP turns the N-times-M integration problem (N models times M tools) into N+M. Adopted by Claude, Cursor, and a growing ecosystem of third-party servers.' },
+  vectordb:    { layer:'Layer 02 -- Compositions', title:'Vector Database', badge:'Vector DB', bcls:'te', desc:"A database optimized for storing and querying embeddings at scale. Instead of exact keyword matching, you query with 'find the K vectors most similar to this one'. Pinecone, Weaviate, Chroma, Qdrant, and pgvector are common choices. The storage layer that makes RAG work.", note:'A vector DB without embeddings is useless. Embeddings without a vector DB are unscalable.' },
+  rag:         { layer:'Layer 02 -- Compositions', title:'Retrieval-Augmented Generation', badge:'RAG', bcls:'am', desc:"The most widely deployed enterprise AI pattern. At query time: retrieve the most relevant document chunks from a vector DB, inject them into the prompt, and the LLM answers grounded in real content rather than relying on its training data alone. Solves the core problem of LLMs not knowing your private or recent data.", note:'RAG is not a model. It is an architecture pattern that chains Embedding + Vector DB + LLM. Chunking strategy and retrieval quality matter more than model choice.' },
+  guardrails:  { layer:'Layer 02 -- Compositions', title:'Guardrails', badge:'Safety layer', bcls:'gy', desc:"Runtime filters on both sides of your AI system. Input guardrails catch malicious prompts, injection attacks, and off-topic requests before they reach the model. Output guardrails check that responses don't leak sensitive data, violate policy, or return malformed formats.", note:'Frequently skipped in prototypes. Always regretted in production.' },
+  multimodal:  { layer:'Layer 02 -- Compositions', title:'Multimodal Model', badge:'Multimodal', bcls:'bl', desc:"LLMs extended to understand and sometimes generate images, audio, and video in addition to text. GPT-4o, Claude 4, and Gemini are multimodal. You can drop a screenshot, chart, or diagram directly into the prompt without manually transcribing it.", note:'The boundary between vision models and language models has largely dissolved. Audio and video understanding are following the same trajectory.' },
+  promptcache: { layer:'Layer 02 -- Compositions', title:'Prompt Caching', badge:'Optimization', bcls:'bl', desc:"A technique where the model provider caches the internal computation (KV cache) for a prefix of your prompt that stays the same across requests. If you send the same long system prompt or document context repeatedly, subsequent calls skip re-processing that prefix -- dramatically cutting latency and cost.", note:'Especially valuable for RAG pipelines, long system prompts, and agentic loops where the same context is reused across many calls.' },
+  sft:         { layer:'Layer 03 -- Model Adaptation', title:'Supervised Fine-Tuning', badge:'SFT', bcls:'gn', desc:"The most direct adaptation method: collect labeled (input, ideal output) pairs, then continue training the model on them. You show it what good answers look like in your domain. Applied to a pre-trained base LLM -- not training from scratch. SFT is typically the first step before more nuanced alignment methods like RLHF or DPO.", note:'SFT alone is often sufficient for domain adaptation. Data quality matters far more than data quantity.' },
+  lora:        { layer:'Layer 03 -- Model Adaptation', title:'Low-Rank Adaptation', badge:'LoRA', bcls:'gn', desc:"A parameter-efficient fine-tuning technique. The original model weights stay frozen; small trainable low-rank matrices are inserted alongside them. Only these small matrices are updated during training. Result: domain-specific behavior at roughly 1% of the compute and memory cost of full fine-tuning. QLoRA combines this with quantization for even greater efficiency.", note:'LoRA made personal and on-device fine-tuning practical. It is the reason consumer-grade model adaptation exists.' },
+  rlhf:        { layer:'Layer 03 -- Model Adaptation', title:'RLHF / DPO', badge:'Alignment', bcls:'gn', desc:"Methods for aligning model behavior with human preferences. In RLHF, human raters compare outputs, a reward model is trained on those preferences, then reinforcement learning shapes the LLM. DPO (Direct Preference Optimization) achieves similar results more simply -- it skips the reward model and optimizes the LLM directly on preference pairs. Both are applied after SFT.", note:'RLHF shaped ChatGPT\'s helpfulness. DPO has become the more common choice in 2025-26 due to its simplicity and stability.' },
+  distill:     { layer:'Layer 03 -- Model Adaptation', title:'Knowledge Distillation', badge:'Distillation', bcls:'gn', desc:"A large capable model (teacher) generates training signals for a smaller model (student). The student learns to mimic the teacher's output distribution, not just hard labels. The student model already exists as a pre-trained base -- distillation transfers capability into it, making it punch above its weight class.", note:'Why small models keep getting better: they are trained on the outputs of much larger ones. DeepSeek, Phi, and Gemma all leverage distillation heavily.' },
+  agent:       { layer:'Layer 04 -- Deployment', title:'Agent', badge:'Agent', bcls:'pu', desc:"An LLM operating in a loop: receive goal, plan, act via function calls, observe results, adjust, repeat until done. The shift from answerer to executor. Agents can browse the web, write and run code, manage files, query databases -- anything reachable via an API or tool.", note:"The hard problem isn't making agents act. It's making them stop gracefully when something goes wrong, and knowing when to ask for human input." },
+  finetune:    { layer:'Layer 04 -- Deployment', title:'Fine-tuning', badge:'Fine-tuning', bcls:'te', desc:"Retraining a base model on your own domain data so it internalizes your knowledge, style, and terminology. More thorough than RAG -- the knowledge is baked into the weights, not retrieved at runtime. Uses the Layer 03 adaptation methods (SFT, LoRA, etc.) as its implementation techniques.", note:'Bad data in, bad model out. Fine-tuning amplifies both the quality and the flaws of your dataset.' },
+  framework:   { layer:'Layer 04 -- Deployment', title:'Framework', badge:'LangChain, LlamaIndex, Vercel AI SDK', bcls:'am', desc:"Developer tooling that handles the plumbing: prompt templates, memory management, tool orchestration, chain composition, streaming. Reduces boilerplate dramatically, but adds an abstraction layer that can make debugging harder when things break.", note:'Frameworks are great for speed. Less great when something breaks in production at 2am and the error is three abstractions deep.' },
+  eval:        { layer:'Layer 04 -- Deployment', title:'Evals', badge:'Evaluation', bcls:'gy', desc:"Systematic measurement of AI system quality. Evals are to AI what tests are to software. They range from simple accuracy checks against known answers to LLM-as-judge approaches where another model rates output quality. Without evals, you're shipping vibes.", note:'If you can\'t measure it, you can\'t improve it. Evals should run in CI -- not just before launch.' },
+  redteam:     { layer:'Layer 04 -- Deployment', title:'Red Teaming', badge:'Adversarial testing', bcls:'gy', desc:"Systematically attacking your own AI system to find failure modes before users do. Covers jailbreaks, prompt injection, data extraction, hallucination triggers, and general edge case discovery. Increasingly automated with tools that generate adversarial inputs at scale.", note:'Teams that skip red teaming do it in production instead. Users will find what you missed.' },
+  smallmodel:  { layer:'Layer 04 -- Deployment', title:'Small Model', badge:'Small / Distilled Model', bcls:'bl', desc:"Compact, fast, cheap models optimized for specific tasks. For classification, intent detection, extraction, or simple Q&A, a small model (Phi, Gemma, Llama 8B) often matches a frontier model at a fraction of cost and latency. Defaulting to the biggest available model is a common and expensive mistake.", note:'Match the model to the task. Not every problem needs a frontier model.' },
+  multiagent:  { layer:'Layer 05 -- Emerging', title:'Multi-Agent Systems', badge:'Multi-Agent', bcls:'co', desc:"Multiple AI agents collaborating -- each specialized, each handling part of the problem. One researches, one writes, one critiques, one executes. They can debate, divide labor, and check each other's work. The coordination overhead, error propagation, and failure modes are the still-unsolved parts.", note:'The gap between the promise and reliability of multi-agent systems remains significant, though frameworks like CrewAI and AutoGen are narrowing it.' },
+  syndata:     { layer:'Layer 05 -- Emerging', title:'Synthetic Data', badge:'Synthetic Data', bcls:'co', desc:"Using AI to generate training data for AI. When real data is scarce, expensive, or privacy-sensitive, synthetic data fills the gap. As model quality improves, synthetic data quality improves too -- enabling a flywheel where better models produce better training data for the next generation.", note:'One of the main answers to "what do you train on once you\'ve consumed the internet?" Model collapse -- where models degrade from training on too much synthetic data -- is the key risk to manage.' },
+  interp:      { layer:'Layer 05 -- Emerging', title:'Interpretability', badge:'Mechanistic Interpretability', bcls:'co', desc:"The effort to understand what is actually happening inside a model -- which neurons activate for which concepts, how circuits implement behaviors. Researchers have identified features corresponding to specific concepts, including safety-relevant patterns like deception, using techniques like sparse autoencoders on model activations.", note:"You can't fully trust or control a system you don't understand. Interpretability is the long road to real AI safety." },
+  thinking:    { layer:'Layer 05 -- Emerging', title:'Thinking Model', badge:'Reasoning Model', bcls:'co', desc:"Models that reason before answering -- they spend extra compute at inference time working through a problem step-by-step before committing to a response. OpenAI's o-series, Claude's extended thinking mode, and Gemini's thinking mode all implement this. Dramatically better at math, code, logic, and multi-step planning.", note:'Thinking models trade latency and cost for accuracy. They are typically 5-20x slower and costlier than standard models for the same task.' },
+  testtime:    { layer:'Layer 05 -- Emerging', title:'Test-Time Compute', badge:'Scaling paradigm', bcls:'co', desc:"The idea that you can improve AI performance by spending more compute at inference time rather than only at training time. Thinking models are one instance. Other approaches include generating multiple candidate answers and selecting the best (best-of-N), self-verification loops, and tree search over reasoning paths.", note:'Training-time scaling (bigger models, more data) dominated 2020-2023. Test-time compute scaling is the new frontier -- it lets existing models punch above their weight.' },
+};
+
+let active = null;
+
+function show(key, el) {
+  if (active === key) {
+    active = null;
+    document.querySelectorAll('.nd').forEach(n => n.classList.remove('active'));
+    renderEmpty();
+    return;
+  }
+  active = key;
+  document.querySelectorAll('.nd').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  const d = D[key];
+  const panel = document.getElementById('panel');
+  panel.style.opacity = '0';
+  setTimeout(() => {
+    panel.className = 'detail has-accent-' + d.bcls;
+    panel.innerHTML = `
+      <div class="detail-layer">${d.layer}</div>
+      <div class="detail-title">${d.title}</div>
+      <div class="detail-badge ${d.bcls}">${d.badge}</div>
+      <div class="detail-desc">${d.desc}</div>
+      <div class="detail-note">${d.note}</div>
+    `;
+    panel.style.opacity = '1';
+  }, 120);
+}
+
+function renderEmpty() {
+  const panel = document.getElementById('panel');
+  panel.style.opacity = '0';
+  setTimeout(() => {
+    panel.className = 'detail';
+    panel.innerHTML = '<div class="detail-layer">Select a concept</div><div class="detail-title" style="color:var(--text-hint);">Click any node to see its explanation here</div>';
+    panel.style.opacity = '1';
+  }, 120);
+}
+
+function toggleLayer(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+}
+
+// Restore saved theme
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+
+// Resizable divider
+(function() {
+  const divider = document.getElementById('divider');
+  const page = document.querySelector('.page');
+  let dragging = false;
+
+  divider.addEventListener('mousedown', (e) => {
+    dragging = true;
+    divider.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const pageRect = page.getBoundingClientRect();
+    const offsetX = e.clientX - pageRect.left;
+    const totalW = pageRect.width;
+    const mapW = Math.max(400, Math.min(totalW - 280, offsetX));
+    const sidebarW = totalW - mapW - 6;
+    page.style.gridTemplateColumns = mapW + 'px 6px ' + sidebarW + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    divider.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+
+  // Touch support
+  divider.addEventListener('touchstart', (e) => {
+    dragging = true;
+    divider.classList.add('dragging');
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    const touch = e.touches[0];
+    const pageRect = page.getBoundingClientRect();
+    const offsetX = touch.clientX - pageRect.left;
+    const totalW = pageRect.width;
+    const mapW = Math.max(400, Math.min(totalW - 280, offsetX));
+    const sidebarW = totalW - mapW - 6;
+    page.style.gridTemplateColumns = mapW + 'px 6px ' + sidebarW + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false;
+    divider.classList.remove('dragging');
+  });
+})();
+</script>
+</body>
+</html>
